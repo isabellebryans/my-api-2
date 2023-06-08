@@ -1,8 +1,6 @@
 package org.example;
 
-import com.fasterxml.jackson.databind.annotation.JsonAppend;
 import com.google.gson.Gson;
-import org.apache.jena.graph.GraphUtil;
 import org.apache.jena.query.*;
 import org.apache.jena.rdf.model.*;
 import org.apache.jena.riot.Lang;
@@ -10,12 +8,14 @@ import org.apache.jena.riot.RDFDataMgr;
 import org.example.move.Move;
 import org.example.utils.loadData;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.List;
+import java.io.OutputStream;
 
 public class MakeMoveController {
-    private final String filename = "boardStatus.ttl";
     public String handleMakeMove(spark.Request req, spark.Response res) throws IOException {
+        String filename = "boardStatus.ttl";
         res.type("application/json");
         // automatically fills in class properties
         Move move = new Gson().fromJson(req.body(), Move.class);
@@ -25,22 +25,34 @@ public class MakeMoveController {
             return "Move not created";
         }
         // Load rdf graph
-        //String filename = "boardStatus.ttl";
+
         Model model = loadData.initAndLoadModelFromResource(filename, Lang.TURTLE);
         //RDFDataMgr.write(System.out, model, Lang.TTL);
-        // delete triple in to tile if there is one (do after)
-        model = delete(model, move.getTo());
-        // calculate which triple to delete and delete it
+        // delete piece in TO tile (this piece has been captured) IF captured piece
+        delete(model, move.getTo());
 
-        // delete triple in
+        // delete the triple of the piece in the old position
+        delete(model, move.getfrom());
 
-        // add new triple to "boardStatus"
+        // add triple of piece in new position
+        addTriple(model, move);
 
+
+        // add updated position graph to "boardStatus.ttl"
+        File file = new File("src/main/resources/"+ filename);
+        OutputStream out = new FileOutputStream(file);
+        RDFDataMgr.write(out, model, Lang.TURTLE);
+
+        RDFDataMgr.write(System.out, model, Lang.TTL);
         res.status(200);
         return "Move created";
     }
 
-    private static Model delete(Model model, String tile) {
+
+    // This function deletes the triple with the object of the tile parameter
+    // Deletes any triples of the form:
+    // <subject> <predicate> <http://example.org/chess/"tile">
+    private static void delete(Model model, String tile) {
         String ns = "http://example.org/chess/";
         // Create query
         String queryString = "PREFIX ns1: <http://example.org/chess/> \n SELECT ?subject ?predicate ?object WHERE { ?subject ?predicate ?object. FILTER(?object = ns1:"+ tile + ") }";
@@ -56,35 +68,53 @@ public class MakeMoveController {
 
             // Process the query results
             if (results.hasNext()) {
-                System.out.println("Has next");
                 QuerySolution solution = results.nextSolution();
                 // Access the individual query results
                 String subject = solution.get("subject").toString();
                 String predicate = solution.get("predicate").toString();
                 String object = solution.get("object").toString();
 
-                System.out.println("Subject: " + subject);
+                /*System.out.println("Subject: " + subject);
                 System.out.println("Predicate: " + predicate);
-                System.out.println("Object: " + object);
+                System.out.println("Object: " + object);*/
 
                 Resource sub = solution.getResource("subject");
                 Property prop = ResourceFactory.createProperty(predicate);
                 RDFNode obj = solution.get("object");
                 Statement tripleToDelete = ResourceFactory.createStatement(sub, prop, obj);
-                System.out.println(tripleToDelete);
+                System.out.println("Deleting triple... " +tripleToDelete);
                 model.remove(tripleToDelete);
 
             }
             else {
                 System.out.println("No results to query :(");
             }
-        }
-        // find object that is the same as the "tile"
-        RDFDataMgr.write(System.out, model, Lang.TTL);
-        // check if the subject is "piece"
-        // if so, remove it from the model
-        // if not, error
+        } catch (Exception e){
+            System.out.println("Error in deleting triple.");
 
-        return model;
+
+        }
+
     }
+
+    private static void addTriple(Model model, Move move){
+        String subject = move.getPiece();
+        String object = move.getTo();
+        String ns = "http://example.org/chess/";
+
+        // create triple to add
+        // triple is the piece that is moved, is now in its new position
+        // So <"piece"> <isIn> <"toPosition">
+        Resource sub = ResourceFactory.createResource(ns + subject);
+        Property prop = ResourceFactory.createProperty(ns+ "isIn");
+        RDFNode obj = ResourceFactory.createResource(ns + object);
+
+        Statement tripleToAdd = ResourceFactory.createStatement(sub, prop, obj);
+        System.out.println("Adding triple... " +tripleToAdd);
+
+        // Add triple to rdf graph
+        model.add(tripleToAdd);
+
+    }
+
 }
