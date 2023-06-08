@@ -1,13 +1,10 @@
 package org.example;
 
 import com.google.gson.Gson;
-import org.apache.jena.query.QueryExecution;
-import org.apache.jena.query.QueryExecutionFactory;
-import org.apache.jena.query.QuerySolution;
-import org.apache.jena.query.ResultSet;
+import org.apache.jena.query.*;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
-import org.apache.jena.query.ParameterizedSparqlString;
+import org.apache.jena.riot.RDFDataMgr;
 import org.example.move.Move;
 import org.example.utils.loadData;
 
@@ -27,7 +24,7 @@ public class MakeMoveController {
         // Load rdf graph
         //String filename = "boardStatus.ttl";
         Model model = loadData.initAndLoadModelFromResource(filename, Lang.TURTLE);
-
+        RDFDataMgr.write(System.out, model, Lang.TTL);
         // delete triple in to tile if there is one (do after)
         model = delete(model, move.getTo());
         // calculate which triple to delete and delete it
@@ -43,16 +40,15 @@ public class MakeMoveController {
     private static Model delete(Model model, String tile) {
         String ns = "http://example.org/chess/";
         // Create query
-        String queryString = "SELECT ?subject ?predicate ?object WHERE { ?subject ?predicate ?object. FILTER (?object = $tile) }";
+        String queryString = "PREFIX ns1: <http://example.org/chess/> \n SELECT ?subject ?predicate ?object WHERE { ?subject ?predicate ?object. }";
 
-        // Create a ParameterizedSparqlString and set the object variable value
-        ParameterizedSparqlString parameterizedQuery = new ParameterizedSparqlString(queryString);
-        parameterizedQuery.setLiteral("tile", ns+tile);
-        System.out.println("in delete function");
-        // Execute the parameterized query
-        try (QueryExecution qexec = QueryExecutionFactory.create(parameterizedQuery.asQuery(), model)) {
-            System.out.println("In try tatement");
+        // Create a Query object from the query string
+        Query query = QueryFactory.create(queryString);
+
+        // Execute the query
+        try (QueryExecution qexec = QueryExecutionFactory.create(query, model)) {
             ResultSet results = qexec.execSelect();
+
             if(results.getRowNumber()== 0) {
                 System.out.println("No results found.");
             }
