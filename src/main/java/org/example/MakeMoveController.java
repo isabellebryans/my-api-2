@@ -52,13 +52,11 @@ public class MakeMoveController {
         try (QueryExecution qexec = QueryExecutionFactory.create(query, model)) {
             ResultSet results = qexec.execSelect();
             //ResultSetFormatter.out(System.out, results, query);
-            if (results.getRowNumber() == 0) {
-                System.out.println("No results found.");
-            }
+
 
             // Process the query results
-            while (results.hasNext()) {
-
+            if (results.hasNext()) {
+                System.out.println("Has next");
                 QuerySolution solution = results.nextSolution();
                 // Access the individual query results
                 String subject = solution.get("subject").toString();
@@ -75,11 +73,14 @@ public class MakeMoveController {
                 Statement tripleToDelete = ResourceFactory.createStatement(sub, prop, obj);
                 System.out.println(tripleToDelete);
                 model.remove(tripleToDelete);
-                RDFDataMgr.write(System.out, model, Lang.TTL);
+
+            }
+            else {
+                System.out.println("No results to query :(");
             }
         }
         // find object that is the same as the "tile"
-
+        RDFDataMgr.write(System.out, model, Lang.TTL);
         // check if the subject is "piece"
         // if so, remove it from the model
         // if not, error
