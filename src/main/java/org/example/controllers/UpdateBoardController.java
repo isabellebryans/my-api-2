@@ -1,4 +1,4 @@
-package org.example;
+package org.example.controllers;
 
 import com.google.gson.Gson;
 import org.apache.jena.query.*;
@@ -13,8 +13,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
-public class MakeMoveController {
-    public String handleMakeMove(spark.Request req, spark.Response res) throws IOException {
+public class UpdateBoardController {
+    public String handleUpdateBoard(spark.Request req, spark.Response res) throws IOException {
         String filename = "boardStatus.ttl";
         res.type("application/json");
         // automatically fills in class properties

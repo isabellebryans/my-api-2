@@ -1,6 +1,9 @@
 package org.example;
 import com.google.gson.Gson;
 import jep.*;
+import org.example.controllers.ResetBoardController;
+import org.example.controllers.TestMoveController;
+import org.example.controllers.UpdateBoardController;
 import org.example.validator.Validator;
 
 
@@ -11,14 +14,18 @@ public class Main {
 
         port(3000);
         TestMoveController testMoveController = new TestMoveController();
-        MakeMoveController makeMoveController = new MakeMoveController();
+        UpdateBoardController updateBoardController = new UpdateBoardController();
         get("/move", (req, res)->"Hello, world");
 
         // gives it a move, perform shacl validation, then send back shacl validation results for each type, don't update board status
         post("/testMove", testMoveController::handleTestMove);
 
-        // make actual move, no SHACL validation. This move is validated already
-        post("/makeMove", makeMoveController::handleMakeMove);
+        // update board by passing in newest move
+        // no shacl validation
+        // just updates boardStatus.ttl
+        post("/updateBoard", updateBoardController::handleUpdateBoard);
+
+        post("/resetBoard", ResetBoardController::handleResetBoard);
 
         // validate
         // might not need this idk yet

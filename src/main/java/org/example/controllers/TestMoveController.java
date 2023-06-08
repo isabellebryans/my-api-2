@@ -1,4 +1,4 @@
-package org.example;
+package org.example.controllers;
 
 import com.google.gson.Gson;
 import org.apache.jena.rdf.model.*;
