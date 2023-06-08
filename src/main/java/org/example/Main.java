@@ -1,17 +1,8 @@
 package org.example;
 import com.google.gson.Gson;
 import jep.*;
-import org.apache.jena.riot.Lang;
-import org.apache.jena.riot.RDFDataMgr;
-import org.example.move.Move;
-import org.example.utils.loadData;
-import org.apache.jena.rdf.model.*;
+import org.example.validator.Validator;
 
-
-
-import java.io.FileOutputStream;
-import java.io.OutputStream;
-import java.io.File;
 
 import static spark.Spark.*;
 public class Main {
@@ -19,26 +10,39 @@ public class Main {
     public static void main(String[] args) {
 
         port(3000);
+        TestMoveController testMoveController = new TestMoveController();
+        MakeMoveController makeMoveController = new MakeMoveController();
         get("/move", (req, res)->"Hello, world");
 
-        post("/move", (req,res)->{
-            System.out.println("here1");
+        // gives it a move, perform shacl validation, then send back shacl validation results for each type, don't update board status
+        post("/testMove", testMoveController::handleTestMove);
+
+        // make actual move, no SHACL validation. This move is validated already
+        post("/makeMove", makeMoveController::handleMakeMove);
+
+        // validate
+        // might not need this idk yet
+        post("/shacl", (req,res)->{
             res.type("application/json");
             // automatically fills in class properties
-            Move move = new Gson().fromJson(req.body(), Move.class);
-            if(move == null){
+            Validator shaclValidator = new Gson().fromJson(req.body(), Validator.class);
+            if(shaclValidator == null){
                 // something went wrong
                 res.status(400);
-                return "Move not created";
+                return "SHACL validator couldn't be read";
             }
-            System.out.println("here1.5");
-            convert_to_rdf(move);
+
+            // call shacl
             res.status(200);
-            System.out.println("here2");
-            return "Move created";
+            return shaclValidator;
 
         });
-        post("/reset", (req,res)->{
+
+
+        // NEED THIS
+        //reset board status, doesn't work
+        // emtpy boardStatusT2
+        post("/totalReset", (req,res)->{
             System.out.println("here3");
             res.type("application/json");
             System.out.println("here");
@@ -54,35 +58,10 @@ public class Main {
 
         });
 
-    }
-    private static void convert_to_rdf(Move move)
-    {
-    try{
 
-        String filename = "chessMove.ttl";
-        String ns = "http://example.org/chess/";
-        // Get rdf graph from file
-        Model model = loadData.initAndLoadModelFromResource(filename, Lang.TURTLE);
-        // create new triple from move
-        Resource subject = model.createResource(ns+move.getPiece());
-        Property predicate = model.createProperty(ns+"to");
-        RDFNode object = model.createResource(ns+move.getTo());
-        Statement triple = model.createStatement(subject, predicate, object);
-        // Add new triple from graph
-        model.add(triple);
-
-        // Put updated graph back into the file
-        File file = new File("src/main/resources/"+filename);
-        OutputStream out = new FileOutputStream(file);
-        RDFDataMgr.write(out, model, Lang.TURTLE);
-        RDFDataMgr.write(System.out, model, Lang.TURTLE);
 
     }
-    catch(Exception e){
-        e.printStackTrace();
-    }
-    }
-
+    // doesn't work
     public static int runScript(String pythonScriptRelativePath) {
         System.out.println("about to run python");
         try (Interpreter interp = new SharedInterpreter()) {

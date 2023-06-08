@@ -1,0 +1,2 @@
+<http://example.org/chess/P2>
+        <http://example.org/chess/to>  <http://example.org/chess/d2> .

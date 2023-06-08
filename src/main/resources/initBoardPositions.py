@@ -70,4 +70,4 @@ for i in range(16):
 
 
 print(g.serialize(format="turtle"))
-g.serialize(destination="boardstatus.ttl")
+g.serialize(destination="boardStatus.ttl")

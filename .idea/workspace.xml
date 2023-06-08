@@ -4,26 +4,19 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="14f08361-38a5-4d07-8afc-c157b0ac3f9a" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/LNKD.tech Editor.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/uiDesigner.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/Main.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/callPython.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/move/Move.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/move/MoveService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/utils/StandardResponse.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/utils/StatusResponse.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/utils/loadData.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/boardstatus.ttl" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/chessBoardstructure.ttl" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/chessMove.ttl" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/initBoardPositions.py" afterDir="false" />
+    <list default="true" id="14f08361-38a5-4d07-8afc-c157b0ac3f9a" name="Changes" comment="trying to run python code">
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/MakeMoveController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/TestMoveController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/validator/Validator.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/CRchessMove.ttl" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/boardStatusT2.ttl" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/initPiecesInfo.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/piecesInfo.ttl" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/boardstatus.ttl" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/boardStatus.ttl" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/chessMove.ttl" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/initBoardPositions.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/initBoardPositions.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -74,7 +67,7 @@
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
-    "project.structure.last.edited": "Project",
+    "project.structure.last.edited": "Facets",
     "project.structure.proportion": "0.15",
     "project.structure.side.proportion": "0.5804598",
     "settings.editor.selected.configurable": "preferences.pluginManager",
@@ -107,8 +100,17 @@
       <workItem from="1686054414625" duration="5450000" />
       <workItem from="1686062467702" duration="4742000" />
       <workItem from="1686131025087" duration="6508000" />
-      <workItem from="1686142419466" duration="5901000" />
+      <workItem from="1686142419466" duration="6217000" />
+      <workItem from="1686153789493" duration="9984000" />
     </task>
+    <task id="LOCAL-00001" summary="trying to run python code">
+      <created>1686153214818</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1686153214819</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -125,8 +127,13 @@
       </map>
     </option>
   </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="trying to run python code" />
+    <option name="LAST_COMMIT_MESSAGE" value="trying to run python code" />
+  </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/my_api_2$__init__.coverage" NAME="__init__ Coverage Results" MODIFIED="1686140096734" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src/main/resources" />
-    <SUITE FILE_PATH="coverage/my_api_2$initBoardPositions.coverage" NAME="initBoardPositions Coverage Results" MODIFIED="1686152608118" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src/main/resources" />
+    <SUITE FILE_PATH="coverage/my_api_2$initPiecesInfo.coverage" NAME="initPiecesInfo Coverage Results" MODIFIED="1686155273947" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src/main/resources" />
+    <SUITE FILE_PATH="coverage/my_api_2$initBoardPositions.coverage" NAME="initBoardPositions Coverage Results" MODIFIED="1686155026625" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src/main/resources" />
   </component>
 </project>
