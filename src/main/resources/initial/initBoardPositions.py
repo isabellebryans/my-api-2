@@ -54,4 +54,5 @@ for i in range(16):
     g.add((current_piece, ns.isIn, current_position))
 
 print(g.serialize(format="turtle"))
-g.serialize(destination="boardStatus.ttl")
+g.serialize(destination="../boardStatus.ttl")
+g.serialize(destination="initBoardstatus.ttl")

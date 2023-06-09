@@ -55,4 +55,5 @@ for i in range(32):
 
 
 print(g.serialize(format="turtle"))
-g.serialize(destination="piecesInfo.ttl")
+g.serialize(destination="../piecesInfo.ttl")
+g.serialize(destination="InitPiecesInfo.ttl")

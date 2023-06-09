@@ -5,6 +5,7 @@ import org.apache.jena.rdf.model.*;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
 import org.example.move.Move;
+import org.example.results.Results;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -15,6 +16,7 @@ public class TestMoveController {
 
     public String handleTestMove(spark.Request req, spark.Response res){
         res.type("application/json");
+
         // automatically fills in class properties
         Move move = new Gson().fromJson(req.body(), Move.class);
         if(move == null){
@@ -23,7 +25,12 @@ public class TestMoveController {
             return "Move not created";
         }
 
+        // this is what will be returned to client
+        Results SHACL_results = new Results();
+
+        // 1. Cash registry
         cashRegistrytoRDF(move);
+
         res.status(200);
 
         return "Move created";
@@ -31,11 +38,10 @@ public class TestMoveController {
     private static void cashRegistrytoRDF(Move move)
     {
         try{
-
             String filename = "CRchessMove.ttl";
             String ns = "http://example.org/chess/";
             // Get rdf graph from file
-            //Model model = loadData.initAndLoadModelFromResource(filename, Lang.TURTLE);
+            // Model model = loadData.initAndLoadModelFromResource(filename, Lang.TURTLE);
 
             // Create model
             Model model = ModelFactory.createDefaultModel();

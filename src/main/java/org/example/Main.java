@@ -4,7 +4,6 @@ import jep.*;
 import org.example.controllers.ResetBoardController;
 import org.example.controllers.TestMoveController;
 import org.example.controllers.UpdateBoardController;
-import org.example.validator.Validator;
 
 
 import static spark.Spark.*;
@@ -25,36 +24,22 @@ public class Main {
         // just updates boardStatus.ttl
         post("/updateBoard", updateBoardController::handleUpdateBoard);
 
+        // Resets the board status and pieces info (in case of a promotion)
+        // work
         post("/resetBoard", ResetBoardController::handleResetBoard);
 
-        // validate
-        // might not need this idk yet
-        post("/shacl", (req,res)->{
-            res.type("application/json");
-            // automatically fills in class properties
-            Validator shaclValidator = new Gson().fromJson(req.body(), Validator.class);
-            if(shaclValidator == null){
-                // something went wrong
-                res.status(400);
-                return "SHACL validator couldn't be read";
-            }
 
-            // call shacl
-            res.status(200);
-            return shaclValidator;
-
-        });
 
 
         // NEED THIS
-        //reset board status, doesn't work
+        // reset board status, doesn't work
         // emtpy boardStatusT2
         post("/totalReset", (req,res)->{
             System.out.println("here3");
             res.type("application/json");
             System.out.println("here");
             // call the python script to reset the initial board status
-            int stat = runScript("initBoardPositions.py");
+            int stat = runScript("initial/initBoardPositions.py");
             System.out.println(stat);
             res.status(stat);
 
