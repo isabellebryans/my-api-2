@@ -6,6 +6,7 @@ import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
 import org.example.move.Move;
 import org.example.results.Results;
+import org.example.w1_SHACL.CRValidation;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -30,6 +31,7 @@ public class TestMoveController {
 
         // 1. Cash registry
         cashRegistrytoRDF(move);
+        int CR_val = CRValidation.handleCRValidation();
 
         // Create Gson instance
         Gson gson = new Gson();
