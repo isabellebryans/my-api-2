@@ -31,9 +31,18 @@ public class TestMoveController {
         // 1. Cash registry
         cashRegistrytoRDF(move);
 
+        // Create Gson instance
+        Gson gson = new Gson();
+
+        // Convert the object to a JSON string
+        String json = gson.toJson(SHACL_results);
+
+        // Print the JSON string
+        System.out.println(json);
+
         res.status(200);
 
-        return "Move created";
+        return json;
     }
     private static void cashRegistrytoRDF(Move move)
     {

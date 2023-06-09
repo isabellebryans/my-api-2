@@ -6,14 +6,13 @@ public class Results {
     private int CR;
     private int TT;
     private int boardStatus;
-    private int status;
+
 
     public Results() {
         this.TS = 2;
         this.CR = 2;
         this.TT = 2;
         this.boardStatus = 2;
-        this.status = 2;
     }
 
     public int getTT(){
@@ -35,7 +34,4 @@ public class Results {
         this.boardStatus = boardStatus;
     }
 
-    public void setStatus(int status){
-        this.status = status;
-    }
 }
