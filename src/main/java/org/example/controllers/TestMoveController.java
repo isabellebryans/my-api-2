@@ -6,16 +6,17 @@ import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
 import org.example.move.Move;
 import org.example.results.Results;
-import org.example.w1_SHACL.CRValidation;
+import org.example.w1_SHACL.w1_run_SHACL_validation;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 
 public class TestMoveController {
 
 
-    public String handleTestMove(spark.Request req, spark.Response res){
+    public String handleTestMove(spark.Request req, spark.Response res) throws IOException {
         res.type("application/json");
 
         // automatically fills in class properties
@@ -31,7 +32,7 @@ public class TestMoveController {
 
         // 1. Cash registry
         cashRegistrytoRDF(move);
-        int CR_val = CRValidation.handleCRValidation();
+        int CR_val = w1_run_SHACL_validation.handleValidation(move);
 
         // Create Gson instance
         Gson gson = new Gson();

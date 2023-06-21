@@ -21,7 +21,7 @@ public class Main {
 
         // update board by passing in newest move
         // no shacl validation
-        // just updates boardStatus.ttl
+        // just updates boardStatusW1.ttl
         post("/updateBoard", updateBoardController::handleUpdateBoard);
 
         // Resets the board status and pieces info (in case of a promotion)

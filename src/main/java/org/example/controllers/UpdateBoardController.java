@@ -15,7 +15,7 @@ import java.io.OutputStream;
 
 public class UpdateBoardController {
     public String handleUpdateBoard(spark.Request req, spark.Response res) throws IOException {
-        String filename = "boardStatus.ttl";
+        String filename = "boardStatusW1.ttl";
         res.type("application/json");
         // automatically fills in class properties
         Move move = new Gson().fromJson(req.body(), Move.class);
@@ -38,7 +38,7 @@ public class UpdateBoardController {
         addTriple(model, move);
 
 
-        // add updated position graph to "boardStatus.ttl"
+        // add updated position graph to "boardStatusW1.ttl"
         File file = new File("src/main/resources/"+ filename);
         OutputStream out = new FileOutputStream(file);
         RDFDataMgr.write(out, model, Lang.TURTLE);

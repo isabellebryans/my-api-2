@@ -1,0 +1,130 @@
+@prefix ns1: <http://example.org/chess/> .
+
+ns1:P1 a ns1:ChessPiece ;
+    ns1:hasColour ns1:white ;
+    ns1:type_t1 ns1:King .
+
+ns1:P10 a ns1:ChessPiece ;
+    ns1:hasColour ns1:white ;
+    ns1:type_t1 ns1:Pawn .
+
+ns1:P11 a ns1:ChessPiece ;
+    ns1:hasColour ns1:white ;
+    ns1:type_t1 ns1:Pawn .
+
+ns1:P12 a ns1:ChessPiece ;
+    ns1:hasColour ns1:white ;
+    ns1:type_t1 ns1:Pawn .
+
+ns1:P13 a ns1:ChessPiece ;
+    ns1:hasColour ns1:white ;
+    ns1:type_t1 ns1:Pawn .
+
+ns1:P14 a ns1:ChessPiece ;
+    ns1:hasColour ns1:white ;
+    ns1:type_t1 ns1:Pawn .
+
+ns1:P15 a ns1:ChessPiece ;
+    ns1:hasColour ns1:white ;
+    ns1:type_t1 ns1:Pawn .
+
+ns1:P16 a ns1:ChessPiece ;
+    ns1:hasColour ns1:white ;
+    ns1:type_t1 ns1:Pawn .
+
+ns1:P17 a ns1:ChessPiece ;
+    ns1:hasColour ns1:black ;
+    ns1:type_t1 ns1:King .
+
+ns1:P18 a ns1:ChessPiece ;
+    ns1:hasColour ns1:black ;
+    ns1:type_t1 ns1:Queen .
+
+ns1:P19 a ns1:ChessPiece ;
+    ns1:hasColour ns1:black ;
+    ns1:type_t1 ns1:Bishop .
+
+ns1:P2 a ns1:ChessPiece ;
+    ns1:hasColour ns1:white ;
+    ns1:type_t1 ns1:Queen .
+
+ns1:P20 a ns1:ChessPiece ;
+    ns1:hasColour ns1:black ;
+    ns1:type_t1 ns1:Bishop .
+
+ns1:P21 a ns1:ChessPiece ;
+    ns1:hasColour ns1:black ;
+    ns1:type_t1 ns1:Knight .
+
+ns1:P22 a ns1:ChessPiece ;
+    ns1:hasColour ns1:black ;
+    ns1:type_t1 ns1:Knight .
+
+ns1:P23 a ns1:ChessPiece ;
+    ns1:hasColour ns1:black ;
+    ns1:type_t1 ns1:Rook .
+
+ns1:P24 a ns1:ChessPiece ;
+    ns1:hasColour ns1:black ;
+    ns1:type_t1 ns1:Rook .
+
+ns1:P25 a ns1:ChessPiece ;
+    ns1:hasColour ns1:black ;
+    ns1:type_t1 ns1:Pawn .
+
+ns1:P26 a ns1:ChessPiece ;
+    ns1:hasColour ns1:black ;
+    ns1:type_t1 ns1:Pawn .
+
+ns1:P27 a ns1:ChessPiece ;
+    ns1:hasColour ns1:black ;
+    ns1:type_t1 ns1:Pawn .
+
+ns1:P28 a ns1:ChessPiece ;
+    ns1:hasColour ns1:black ;
+    ns1:type_t1 ns1:Pawn .
+
+ns1:P29 a ns1:ChessPiece ;
+    ns1:hasColour ns1:black ;
+    ns1:type_t1 ns1:Pawn .
+
+ns1:P3 a ns1:ChessPiece ;
+    ns1:hasColour ns1:white ;
+    ns1:type_t1 ns1:Bishop .
+
+ns1:P30 a ns1:ChessPiece ;
+    ns1:hasColour ns1:black ;
+    ns1:type_t1 ns1:Pawn .
+
+ns1:P31 a ns1:ChessPiece ;
+    ns1:hasColour ns1:black ;
+    ns1:type_t1 ns1:Pawn .
+
+ns1:P32 a ns1:ChessPiece ;
+    ns1:hasColour ns1:black ;
+    ns1:type_t1 ns1:Pawn .
+
+ns1:P4 a ns1:ChessPiece ;
+    ns1:hasColour ns1:white ;
+    ns1:type_t1 ns1:Bishop .
+
+ns1:P5 a ns1:ChessPiece ;
+    ns1:hasColour ns1:white ;
+    ns1:type_t1 ns1:Knight .
+
+ns1:P6 a ns1:ChessPiece ;
+    ns1:hasColour ns1:white ;
+    ns1:type_t1 ns1:Knight .
+
+ns1:P7 a ns1:ChessPiece ;
+    ns1:hasColour ns1:white ;
+    ns1:type_t1 ns1:Rook .
+
+ns1:P8 a ns1:ChessPiece ;
+    ns1:hasColour ns1:white ;
+    ns1:type_t1 ns1:Rook .
+
+ns1:P9 a ns1:ChessPiece ;
+    ns1:hasColour ns1:white ;
+    ns1:type_t1 ns1:Pawn .
+

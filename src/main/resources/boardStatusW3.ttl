@@ -1,0 +1,66 @@
+@prefix ns1: <http://example.org/chess/> .
+
+ns1:P1 ns1:occupiesPosition_t2 ns1:e1 .
+
+ns1:P10 ns1:occupiesPosition_t2 ns1:b2 .
+
+ns1:P11 ns1:occupiesPosition_t2 ns1:c2 .
+
+ns1:P12 ns1:occupiesPosition_t2 ns1:d2 .
+
+ns1:P13 ns1:occupiesPosition_t2 ns1:e2 .
+
+ns1:P14 ns1:occupiesPosition_t2 ns1:f2 .
+
+ns1:P15 ns1:occupiesPosition_t2 ns1:g2 .
+
+ns1:P16 ns1:occupiesPosition_t2 ns1:h2 .
+
+ns1:P17 ns1:occupiesPosition_t2 ns1:e8 .
+
+ns1:P18 ns1:occupiesPosition_t2 ns1:d8 .
+
+ns1:P19 ns1:occupiesPosition_t2 ns1:c8 .
+
+ns1:P2 ns1:occupiesPosition_t2 ns1:d1 .
+
+ns1:P20 ns1:occupiesPosition_t2 ns1:f8 .
+
+ns1:P21 ns1:occupiesPosition_t2 ns1:b8 .
+
+ns1:P22 ns1:occupiesPosition_t2 ns1:g8 .
+
+ns1:P23 ns1:occupiesPosition_t2 ns1:a8 .
+
+ns1:P24 ns1:occupiesPosition_t2 ns1:h8 .
+
+ns1:P25 ns1:occupiesPosition_t2 ns1:a7 .
+
+ns1:P26 ns1:occupiesPosition_t2 ns1:b7 .
+
+ns1:P27 ns1:occupiesPosition_t2 ns1:c7 .
+
+ns1:P28 ns1:occupiesPosition_t2 ns1:d7 .
+
+ns1:P29 ns1:occupiesPosition_t2 ns1:e7 .
+
+ns1:P3 ns1:occupiesPosition_t2 ns1:c1 .
+
+ns1:P30 ns1:occupiesPosition_t2 ns1:f7 .
+
+ns1:P31 ns1:occupiesPosition_t2 ns1:g7 .
+
+ns1:P32 ns1:occupiesPosition_t2 ns1:h7 .
+
+ns1:P4 ns1:occupiesPosition_t2 ns1:f1 .
+
+ns1:P5 ns1:occupiesPosition_t2 ns1:b1 .
+
+ns1:P6 ns1:occupiesPosition_t2 ns1:g1 .
+
+ns1:P7 ns1:occupiesPosition_t2 ns1:a1 .
+
+ns1:P8 ns1:occupiesPosition_t2 ns1:h1 .
+
+ns1:P9 ns1:occupiesPosition_t2 ns1:a2 .
+
