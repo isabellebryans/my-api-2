@@ -3,12 +3,12 @@ package org.example.results;
 public class Results {
 
     private int CR;
-    private int boardStatus;
+    private int staticBoard;
 
 
     public Results() {
         this.CR = 2;
-        this.boardStatus = 2;
+        this.staticBoard = 2;
     }
 
     public void setCR(int CR){
@@ -17,8 +17,8 @@ public class Results {
 
     public int getCR(){ return CR; }
 
-    public void setBoardStatus(int boardStatus){
-        this.boardStatus = boardStatus;
+    public void setStaticBoard(int staticBoard){
+        this.staticBoard = staticBoard;
     }
 
 }

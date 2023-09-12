@@ -6,7 +6,8 @@ import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
 import org.example.move.Move;
 import org.example.results.Results;
-import org.example.w1_SHACL.w1_run_SHACL_validation;
+import org.example.utils.findMovedPiece;
+import org.example.w1_SHACL.SHACLValidation_1wCR;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -14,7 +15,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 public class TestMoveController {
-
 
     public String handleTestMove(spark.Request req, spark.Response res) throws IOException {
         res.type("application/json");
@@ -30,10 +30,18 @@ public class TestMoveController {
         // this is what will be returned to client
         Results SHACL_results = new Results();
 
-        // 1. Cash registry
-        cashRegistrytoRDF(move);
-        int CR_val = w1_run_SHACL_validation.handleValidation(move);
+        Resource piece = findMovedPiece.findMovedPiece_w1(move);
 
+        if(piece == null){
+            res.status(400);
+            return "Couldn't find piece in from position";
+        }
+
+        // Cash registry
+        cashRegistrytoRDF(piece, move);
+
+        String jsonReport = SHACLValidation_1wCR.handleValidation();
+        //SHACL_results.setCR(CR_val);
         // Create Gson instance
         Gson gson = new Gson();
 
@@ -42,24 +50,27 @@ public class TestMoveController {
 
         // Print the JSON string
         System.out.println(json);
+        System.out.println(jsonReport);
 
         res.status(200);
 
-        return json;
+        return jsonReport;
     }
-    private static void cashRegistrytoRDF(Move move)
-    {
+
+
+    // Thi
+    private static void cashRegistrytoRDF(Resource subject, Move move){
+        String filename = "CRchessMove_t1.ttl";
+        String ns = "http://example.org/chess/";
+
         try{
-            String filename = "CRchessMove.ttl";
-            String ns = "http://example.org/chess/";
             // Get rdf graph from file
             // Model model = loadData.initAndLoadModelFromResource(filename, Lang.TURTLE);
 
             // Create model
             Model model = ModelFactory.createDefaultModel();
             // create new triple from move
-            Resource subject = model.createResource(ns+move.getPiece());
-            Property predicate = model.createProperty(ns+"to");
+            Property predicate = model.createProperty(ns+"movesTo_t1");
             RDFNode object = model.createResource(ns+move.getTo());
             Statement triple = model.createStatement(subject, predicate, object);
             // Add new triple from graph
@@ -76,4 +87,5 @@ public class TestMoveController {
             e.printStackTrace();
         }
     }
+
 }

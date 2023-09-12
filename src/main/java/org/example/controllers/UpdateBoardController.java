@@ -6,6 +6,7 @@ import org.apache.jena.rdf.model.*;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
 import org.example.move.Move;
+import org.example.utils.findMovedPiece;
 import org.example.utils.loadData;
 
 import java.io.File;
@@ -45,7 +46,7 @@ public class UpdateBoardController {
 
         RDFDataMgr.write(System.out, model, Lang.TTL);
         res.status(200);
-        return "Move created";
+        return "Board updated";
     }
 
 
@@ -97,16 +98,15 @@ public class UpdateBoardController {
 
     }
 
-    private static void addTriple(Model model, Move move){
-        String subject = move.getPiece();
+    private static void addTriple(Model model, Move move) throws IOException {
         String object = move.getTo();
         String ns = "http://example.org/chess/";
 
         // create triple to add
         // triple is the piece that is moved, is now in its new position
         // So <"piece"> <isIn> <"toPosition">
-        Resource sub = ResourceFactory.createResource(ns + subject);
-        Property prop = ResourceFactory.createProperty(ns+ "isIn");
+        Resource sub = findMovedPiece.findMovedPiece_w1(move);
+        Property prop = ResourceFactory.createProperty(ns+ "occupiesPosition_t0");
         RDFNode obj = ResourceFactory.createResource(ns + object);
 
         Statement tripleToAdd = ResourceFactory.createStatement(sub, prop, obj);

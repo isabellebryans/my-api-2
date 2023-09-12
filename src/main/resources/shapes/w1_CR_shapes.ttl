@@ -1,4 +1,734 @@
 @prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix xs:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix sh: <http://www.w3.org/ns/shacl#>.
+@prefix : <http://example.org/chess/>.
+@prefix shape: <http://example.org/chess/CR-shapes/>.
+
+# Need to do: pawn moves two on first move - > done
+# Pawn move -> done
+# colour, change pawn move -> done
+# moved to cant be king -> done
+# if piece captured, it must be the other colour to the capturer piece -> done
+
+
+# to do :
+# - captureOtherColour (need to do for ts as well)
+
+
+# Knowing
+# BS + PI + status + move
+
+# Can validate:
+# The piece moved must be moved into a position that is empty, or not
+# The move must be a legal move depending on piece moved
+# - King cannot be captured
+# where they move is a tile
+# Piece moved must not be in same position as previous
+
+# Can't validate
+# - Piece captured is indeed captured, can only see this in the next window bc there'll be two pieces in one tile
+# - If a black piece is moved, then it must capture a white piece -> could do ith parql
+# - only one piece moved at one time stamp
+# - if piece captured, can't see if it is then out
+# captured?
+
+# General move
+# the piece moved must adhere to exactly one of the piece move shapes
+:GeneralMoveShape
+    a sh:NodeShape ;
+    sh:targetSubjectsOf :movesTo_t1;
+    sh:message "Invalid move";
+    sh:node shape:cantCaptureKing ;
+    sh:node shape:notSamePosition ;
+    sh:node shape:CaptureOtherColour;
+    sh:xone (
+          [
+              # white Pawn was moved
+              sh:node shape:PawnMoveWhite ;
+          ]
+          [
+              # black Pawn was moved
+              sh:node shape:PawnMoveBlack ;
+          ]
+          [
+              # Rook was moved
+              sh:node shape:RookMove ;
+          ]
+          [
+              # Knight was moved
+              sh:node shape:KnightMove ;
+          ]
+          [
+              # Bishop was moved
+              sh:node shape:BishopMove ;
+
+          ]
+          [
+              # Queen was moved
+              sh:node shape:QueenMove  ;
+          ]
+          [
+              # King was moved
+              sh:node shape:KingMove ;
+          ]
+      ).
+
+shape:KingMove
+    a sh:NodeShape ;
+    sh:class :King ;
+    sh:message "Invalid king move";
+    sh:or(
+          [ sh:node shape:MoveAdjStraight ]
+          [ sh:node shape:MoveAdjDiagonal ]
+      ).
+
+shape:QueenMove
+    a sh:NodeShape ;
+    sh:class :Queen ;
+    sh:message "Invalid queen move";
+    sh:or(
+          [ sh:node shape:MoveAdjStraight ]
+          [ sh:node shape:MoveAdjDiagonal ]
+          [ sh:node shape:MoveUpDown ]
+          [ sh:node shape:MoveSideways ]
+          [ sh:node shape:MoveDiagonal ]
+      ).
+
+shape:RookMove
+    a sh:NodeShape ;
+    sh:class :Rook ;
+    sh:message "Invalid rook move";
+    sh:or(
+          [ sh:node shape:MoveAdjStraight ]
+          [ sh:node shape:MoveUpDown ]
+          [ sh:node shape:MoveSideways ]
+      ).
+
+shape:BishopMove
+    a sh:NodeShape ;
+    sh:class :Bishop ;
+    sh:message "Invalid bishop move";
+    sh:or(
+          [ sh:node shape:MoveAdjDiagonal ]
+          [ sh:node shape:MoveDiagonal ]
+      ).
+
+shape:KnightMove
+    a sh:NodeShape ;
+    sh:class :Knight ;
+    sh:message "Invalid knight move";
+    sh:property shape:moveToTile ;
+    sh:or(
+          [
+              sh:path (:occupiesPosition_t0  :tr :above);
+              sh:equals :movesTo_t1;
+          ]
+          [
+              sh:path (:occupiesPosition_t0  :tr :right);
+              sh:equals :movesTo_t1;
+          ]
+          [
+              sh:path (:occupiesPosition_t0  :tl :above);
+              sh:equals :movesTo_t1;
+          ]
+          [
+              sh:path (:occupiesPosition_t0  :tl :left);
+              sh:equals :movesTo_t1;
+          ]
+          [
+              sh:path (:occupiesPosition_t0  :bl :below);
+              sh:equals :movesTo_t1;
+          ]
+          [
+              sh:path (:occupiesPosition_t0  :bl :left);
+              sh:equals :movesTo_t1;
+          ]
+          [
+              sh:path (:occupiesPosition_t0  :br :below);
+              sh:equals :movesTo_t1;
+          ]
+          [
+              sh:path (:occupiesPosition_t0  :br :right);
+              sh:equals :movesTo_t1;
+          ]
+      ).
+
+# Pawn Move Validation
+# Option 1: Pawn has moved one space forward
+# Option 2: Pawn has moved one space forward diagonally and has captured a piece
+# Option 3: Pawn has been captured
+shape:PawnMoveWhite
+    a sh:NodeShape ;
+    sh:class :Pawn;
+    sh:node shape:PawnAtEnds ;
+    sh:property [
+          sh:path :hasColour ;
+          sh:hasValue :white ;
+      ];
+    sh:message "Invalid white pawn move";
+    sh:or(
+          [
+              # Pawn either moved up one space, or two spaces and its in the second row, didn't capture anything
+              sh:or(
+                       [
+                           sh:property [
+                                           sh:path (:occupiesPosition_t0  :above );
+                                           sh:equals :movesTo_t1;
+                                           sh:class :tile;
+                                       ];
+                       ]
+                       [
+                           sh:property [
+                                           sh:path :occupiesPosition_t0 ;
+                                           sh:property [
+                                                       sh:path :row;
+                                                       sh:hasValue "2";
+                                                   ]
+                                       ];
+                           sh:property [
+                                           sh:path (:occupiesPosition_t0 :above :above );
+                                           sh:equals :movesTo_t1;
+                                           sh:class :tile;
+                                       ];
+                       ]
+
+                   );
+              # Pawn did not capture any piece
+              sh:property [
+                       sh:path :movesTo_t1;
+                       sh:property [
+                                   sh:path [sh:inversePath :occupiesPosition_t0 ];
+                                   sh:maxCount 0;
+                               ]
+                   ];
+          ]
+          [
+              # Pawn moved diagonal, and captured piece
+              sh:or(
+                       [
+                           sh:property [
+                                           sh:path (:occupiesPosition_t0  :tr );
+                                           sh:class :tile;
+                                           sh:equals :movesTo_t1;
+                                       ];
+                       ]
+                       [
+                           sh:property [
+                                           sh:path (:occupiesPosition_t0  :tl );
+                                           sh:class :tile;
+                                           sh:equals :movesTo_t1;
+                                       ];
+                       ]
+                   );
+              sh:property [
+                       sh:path :movesTo_t1;
+                       sh:property [
+                                   sh:path [sh:inversePath :occupiesPosition_t0 ];
+                                   sh:minCount 1;
+                               ]
+                   ]
+          ]
+      ).
+
+shape:PawnMoveBlack
+    a sh:NodeShape ;
+    sh:class :Pawn;
+    sh:property [
+          sh:path :hasColour ;
+          sh:hasValue :black ;
+      ];
+    sh:message "Invalid black pawn move";
+    sh:or(
+          [
+              # Pawn either moved up one space, or two spaces and its in the second row, didn't capture anything
+              sh:or(
+                       [
+                           sh:property [
+                                           sh:path (:occupiesPosition_t0  :below );
+                                           sh:equals :movesTo_t1;
+                                           sh:class :tile;
+                                       ];
+                       ]
+                       [
+                           sh:property [
+                                           sh:path :occupiesPosition_t0 ;
+                                           sh:property [
+                                                       sh:path :row;
+                                                       sh:hasValue "7";
+                                                   ]
+                                       ];
+                           sh:property [
+                                           sh:path (:occupiesPosition_t0 :below :below );
+                                           sh:equals :movesTo_t1;
+                                           sh:class :tile;
+                                       ];
+                       ]
+
+                   );
+              # Pawn did not capture any piece
+              sh:property [
+                       sh:path :movesTo_t1;
+                       sh:property [
+                                   sh:path [sh:inversePath :occupiesPosition_t0 ];
+                                   sh:maxCount 0;
+                               ]
+                   ];
+          ]
+          [
+              # Pawn moved diagonal, and captured piece
+              sh:or(
+                       [
+                           sh:property [
+                                           sh:path (:occupiesPosition_t0  :br );
+                                           sh:class :tile;
+                                           sh:equals :movesTo_t1;
+                                       ];
+                       ]
+                       [
+                           sh:property [
+                                           sh:path (:occupiesPosition_t0  :bl );
+                                           sh:class :tile;
+                                           sh:equals :movesTo_t1;
+                                       ];
+                       ]
+                   );
+              sh:property [
+                       sh:path :movesTo_t1;
+                       sh:property [
+                                   sh:path [sh:inversePath :occupiesPosition_t0 ];
+                                   sh:minCount 1;
+                               ]
+                   ]
+          ]
+      ).
+
+
+shape:MoveAdjStraight
+    a sh:NodeShape ;
+    sh:property shape:moveToTile ;
+    sh:or(
+          [
+              sh:path (:occupiesPosition_t0 :above );
+              sh:equals :movesTo_t1;
+          ]
+          [
+              sh:path (:occupiesPosition_t0 :below );
+              sh:equals :movesTo_t1;
+          ]
+          [
+              sh:path (:occupiesPosition_t0 :left );
+              sh:equals :movesTo_t1;
+          ]
+          [
+              sh:path (:occupiesPosition_t0 :right );
+              sh:equals :movesTo_t1;
+          ]
+      ).
+
+shape:MoveAdjDiagonal
+    a sh:NodeShape ;
+    sh:property shape:moveToTile ;
+    sh:or(
+          [
+              sh:path (:occupiesPosition_t0 :tl );
+              sh:equals :movesTo_t1;
+          ]
+          [
+              sh:path (:occupiesPosition_t0 :tr );
+              sh:equals :movesTo_t1;
+          ]
+          [
+              sh:path (:occupiesPosition_t0 :bl );
+              sh:equals :movesTo_t1;
+          ]
+          [
+              sh:path (:occupiesPosition_t0 :br );
+              sh:equals :movesTo_t1;
+          ]
+      ).
+
+shape:MoveUpDown
+    a sh:NodeShape ;
+    sh:property shape:moveToTile ;
+    # Shacl sparql constraint checks if the column of new pos is same as old pos
+    sh:sparql [ a           sh:SPARQLConstraint ;
+                sh:message  "Invalid move: not on same column." ;
+                sh:prefixes [ sh:declare [ sh:prefix    "" ;
+                                           sh:namespace "http://example.org/chess/"^^xs:anyURI ; ] ;
+                              sh:declare [ sh:prefix "rdf" ;
+                                           sh:namespace
+                                                     "http://www.w3.org/1999/02/22-rdf-syntax-ns#"^^xs:anyURI ; ] ] ;
+                sh:select   """
+      SELECT $this
+      WHERE {
+        $this :occupiesPosition_t0 ?current ;
+              :movesTo_t1
+             ?target .
+        ?current :column ?col1.
+        ?target :column ?col2.
+        FILTER (?col1 != ?col2)
+      }
+    """ ];
+    # Now check if there are any other pieces in the way
+    sh:sparql [ a           sh:SPARQLConstraint ;
+                sh:message  "Invalid move: overtaking is not allowed." ;
+                sh:prefixes [ sh:declare [ sh:prefix    "" ;
+                                           sh:namespace "http://example.org/chess/"^^xs:anyURI ; ] ;
+                              sh:declare [ sh:prefix "rdf" ;
+                                           sh:namespace
+                                                     "http://www.w3.org/1999/02/22-rdf-syntax-ns#"^^xs:anyURI ; ] ] ;
+                sh:select   """
+      SELECT $this ?current ?target ?intermediate
+      WHERE {
+        $this :occupiesPosition_t0 ?current ;
+              :movesTo_t1
+             ?target .
+        ?piece2 rdf:type :ChessPiece.
+        ?piece2 :occupiesPosition_t0 ?tile.
+        ?current :above+ ?intermediate .
+        ?intermediate :above* ?target .
+        FILTER ($this != ?piece2 && ?tile = ?intermediate && ?tile != ?target)
+      }
+    """ ];
+    sh:sparql [
+          a           sh:SPARQLConstraint ;
+          sh:message  "Invalid move: overtaking is not allowed." ;
+          sh:prefixes [ sh:declare [ sh:prefix    "" ;
+                                     sh:namespace "http://example.org/chess/"^^xs:anyURI ; ] ;
+                        sh:declare [ sh:prefix "rdf" ;
+                                     sh:namespace
+                                               "http://www.w3.org/1999/02/22-rdf-syntax-ns#"^^xs:anyURI ; ] ] ;
+          sh:select   """
+      SELECT $this ?current ?target ?intermediate
+      WHERE {
+        $this :occupiesPosition_t0 ?current ;
+              :movesTo_t1
+             ?target .
+        ?piece2 rdf:type :ChessPiece.
+        ?piece2 :occupiesPosition_t0 ?tile.
+        ?current :below+ ?intermediate .
+        ?intermediate :below* ?target .
+        FILTER ($this != ?piece2 && ?tile = ?intermediate && ?tile != ?target)
+      }
+    """
+      ] .
+
+
+shape:MoveSideways
+    a sh:NodeShape ;
+    sh:property shape:moveToTile ;
+    sh:sparql [
+          a sh:SPARQLConstraint ;
+          sh:message  "Invalid move: not on same row." ;
+          sh:prefixes [ sh:declare [ sh:prefix    "" ;
+                                     sh:namespace "http://example.org/chess/"^^xs:anyURI ; ] ;
+                        sh:declare [ sh:prefix "rdf" ;
+                                     sh:namespace
+                                               "http://www.w3.org/1999/02/22-rdf-syntax-ns#"^^xs:anyURI ; ] ] ;
+          sh:select   """
+      SELECT $this
+      WHERE {
+        $this :occupiesPosition_t0 ?current ;
+              :movesTo_t1
+             ?target .
+        ?current :row ?row1.
+        ?target :row ?row2.
+        FILTER (?row1 != ?row2)
+      }
+    """ ];
+    sh:sparql [
+          a sh:SPARQLConstraint ;
+          sh:message  "Invalid move: overtaking is not allowed." ;
+          sh:prefixes [ sh:declare [ sh:prefix    "" ;
+                                     sh:namespace "http://example.org/chess/"^^xs:anyURI ; ] ;
+                        sh:declare [ sh:prefix "rdf" ;
+                                     sh:namespace
+                                               "http://www.w3.org/1999/02/22-rdf-syntax-ns#"^^xs:anyURI ; ] ] ;
+          sh:select   """
+                  SELECT $this ?current ?target ?intermediate
+                  WHERE {
+                    $this :occupiesPosition_t0 ?current ;
+                          :movesTo_t1
+                         ?target .
+                    ?piece2 rdf:type :ChessPiece.
+                    ?piece2 :occupiesPosition_t0 ?tile.
+                    ?current :right+ ?intermediate .
+                    ?intermediate :right* ?target .
+                    FILTER ($this != ?piece2 && ?tile = ?intermediate && ?tile != ?target)
+                  }
+            """ ];
+    sh:sparql [
+          a           sh:SPARQLConstraint ;
+          sh:message  "Invalid move: overtaking is not allowed." ;
+          sh:prefixes [ sh:declare [ sh:prefix    "" ;
+                                     sh:namespace "http://example.org/chess/"^^xs:anyURI ; ] ;
+                        sh:declare [ sh:prefix "rdf" ;
+                                     sh:namespace
+                                               "http://www.w3.org/1999/02/22-rdf-syntax-ns#"^^xs:anyURI ; ] ] ;
+          sh:select   """
+                  SELECT $this ?current ?target ?intermediate
+                  WHERE {
+                    $this :occupiesPosition_t0 ?current ;
+                          :movesTo_t1
+                         ?target .
+                    ?piece2 rdf:type :ChessPiece.
+                    ?piece2 :occupiesPosition_t0 ?tile.
+                    ?current :left+ ?intermediate .
+                    ?intermediate :left* ?target .
+                    FILTER ($this != ?piece2 && ?tile = ?intermediate && ?tile != ?target)
+                  }
+            """ ].
+
+shape:MoveDiagonal
+    a sh:NodeShape ;
+    sh:property shape:moveToTile ;
+    sh:message  "Invalid move: not on same row." ;
+    sh:sparql [
+          a sh:SPARQLConstraint ;
+          sh:message  "Invalid move: not on same row." ;
+          sh:prefixes [ sh:declare [ sh:prefix    "" ;
+                                     sh:namespace "http://example.org/chess/"^^xs:anyURI ; ] ;
+                        sh:declare [ sh:prefix "rdf" ;
+                                     sh:namespace
+                                               "http://www.w3.org/1999/02/22-rdf-syntax-ns#"^^xs:anyURI ; ];
+                        sh:declare [ sh:prefix "xs" ;
+                                     sh:namespace
+                                               "http://www.w3.org/2001/XMLSchema#"^^xs:anyURI ; ]] ;
+          sh:select """
+        SELECT $this
+        WHERE {
+            $this :occupiesPosition_t0 ?current ;
+                  :movesTo_t1
+                 ?target .
+            ?current :row ?row1 ;
+                     :colNo ?col1 .
+            ?target :row ?row2 ;
+                    :colNo ?col2 .
+
+
+            FILTER (((xs:integer(?row1) - xs:integer(?row2)) != (xs:integer(?col1) - xs:integer(?col2))) && ((xs:integer(?row2) - xs:integer(?row1)) != (xs:integer(?col1) - xs:integer(?col2))))
+
+        }
+    """ ];
+    sh:sparql [
+          a sh:SPARQLConstraint ;
+          sh:message  "Invalid move: overtaking is not allowed." ;
+          sh:prefixes [ sh:declare [ sh:prefix    "" ;
+                                     sh:namespace "http://example.org/chess/"^^xs:anyURI ; ] ;
+                        sh:declare [ sh:prefix "rdf" ;
+                                     sh:namespace
+                                               "http://www.w3.org/1999/02/22-rdf-syntax-ns#"^^xs:anyURI ; ] ] ;
+          sh:select   """
+                  SELECT $this ?current ?target ?intermediate
+                  WHERE {
+                    $this :occupiesPosition_t0 ?current ;
+                          :movesTo_t1
+                         ?target .
+                    ?piece2 rdf:type :ChessPiece.
+                    ?piece2 :occupiesPosition_t0 ?tile.
+                    ?current :tr+ ?intermediate .
+                    ?intermediate :tr* ?target .
+                    FILTER ($this != ?piece2 && ?tile = ?intermediate && ?tile != ?target)
+                  }
+            """ ];
+    sh:sparql [
+          a           sh:SPARQLConstraint ;
+          sh:message  "Invalid move: overtaking is not allowed." ;
+          sh:prefixes [ sh:declare [ sh:prefix    "" ;
+                                     sh:namespace "http://example.org/chess/"^^xs:anyURI ; ] ;
+                        sh:declare [ sh:prefix "rdf" ;
+                                     sh:namespace
+                                               "http://www.w3.org/1999/02/22-rdf-syntax-ns#"^^xs:anyURI ; ] ] ;
+          sh:select   """
+                  SELECT $this ?current ?target ?intermediate
+                  WHERE {
+                    $this :occupiesPosition_t0 ?current ;
+                          :movesTo_t1
+                         ?target .
+                    ?piece2 rdf:type :ChessPiece.
+                    ?piece2 :occupiesPosition_t0 ?tile.
+                    ?current :tl+ ?intermediate .
+                    ?intermediate :tl* ?target .
+                    FILTER ($this != ?piece2 && ?tile = ?intermediate && ?tile != ?target)
+                  }
+            """ ];
+    sh:sparql [
+          a           sh:SPARQLConstraint ;
+          sh:message  "Invalid move: overtaking is not allowed." ;
+          sh:prefixes [ sh:declare [ sh:prefix    "" ;
+                                     sh:namespace "http://example.org/chess/"^^xs:anyURI ; ] ;
+                        sh:declare [ sh:prefix "rdf" ;
+                                     sh:namespace
+                                               "http://www.w3.org/1999/02/22-rdf-syntax-ns#"^^xs:anyURI ; ] ] ;
+          sh:select   """
+                  SELECT $this ?current ?target ?intermediate
+                  WHERE {
+                    $this :occupiesPosition_t0 ?current ;
+                          :movesTo_t1
+                         ?target .
+                    ?piece2 rdf:type :ChessPiece.
+                    ?piece2 :occupiesPosition_t0 ?tile.
+                    ?current :br+ ?intermediate .
+                    ?intermediate :br* ?target .
+                    FILTER ($this != ?piece2 && ?tile = ?intermediate && ?tile != ?target)
+                  }
+            """ ];
+    sh:sparql [
+          a           sh:SPARQLConstraint ;
+          sh:message  "Invalid move: overtaking is not allowed." ;
+          sh:prefixes [ sh:declare [ sh:prefix    "" ;
+                                     sh:namespace "http://example.org/chess/"^^xs:anyURI ; ] ;
+                        sh:declare [ sh:prefix "rdf" ;
+                                     sh:namespace
+                                               "http://www.w3.org/1999/02/22-rdf-syntax-ns#"^^xs:anyURI ; ] ] ;
+          sh:select   """
+                  SELECT $this ?current ?target ?intermediate
+                  WHERE {
+                    $this :occupiesPosition_t0 ?current ;
+                          :movesTo_t1
+                         ?target .
+                    ?piece2 rdf:type :ChessPiece.
+                    ?piece2 :occupiesPosition_t0 ?tile.
+                    ?current :bl+ ?intermediate .
+                    ?intermediate :bl* ?target .
+                    FILTER ($this != ?piece2 && ?tile = ?intermediate && ?tile != ?target)
+                  }
+            """ ].
+
+# Piece promotion
+# If pawn moved to opposite end of board, it must be promoted
+# If it is at opposite end, then it is promoted
+shape:PawnAtEnds
+    a sh:NodeShape ;
+    sh:or(
+          [
+              # Black pawn
+              sh:property [
+                              sh:path :hasColour ;
+                              sh:hasValue :black ;
+                          ];
+              sh:or(
+                              [
+                                  sh:property [
+                                                  sh:path (:movesTo_t1 :row );
+                                                  sh:hasValue "1";
+                                              ];
+                                  sh:or(
+                                                  [ sh:class :Queen ]
+                                                  [ sh:class :Bishop ]
+                                                  [ sh:class :Rook ]
+                                                  [ sh:class :Knight ]
+                                              )
+                              ]
+                              [
+                                  sh:not[
+                                            sh:property [
+                                                            sh:path (:movesTo_t1 :row );
+                                                            sh:hasValue "1";
+                                                        ]
+                                        ]
+                              ]
+                          )
+          ]
+          [
+              # White pawn
+              sh:property [
+                              sh:path :hasColour ;
+                              sh:hasValue :white ;
+                          ];
+              sh:or(
+                              [
+                                  sh:property [
+                                                  sh:path (:movesTo_t1 :row );
+                                                  sh:hasValue "8";
+                                              ];
+                                  sh:or(
+                                                  [ sh:class :Queen ]
+                                                  [ sh:class :Bishop ]
+                                                  [ sh:class :Rook ]
+                                                  [ sh:class :Knight ]
+                                              )
+                              ]
+                              [
+                                  sh:not[
+                                            sh:property [
+                                                            sh:path (:movesTo_t1 :row );
+                                                            sh:hasValue "8";
+                                                        ]
+                                        ]
+                              ]
+                          )
+          ]
+      ).
+
+
+# if it moves and there is something there before, it must be the opposite colour
+shape:CaptureOtherColour
+    a sh:NodeShape ;
+    sh:or (
+          [
+              # white can only capture black
+              sh:property [
+                              sh:path :hasColour ;
+                              sh:hasValue :white;
+                          ];
+              sh:property [
+                              sh:path :movesTo_t1;
+                              sh:property [
+                                          sh:path [sh:inversePath :occupiesPosition_t0 ];
+                                          sh:property [
+                                                      sh:path :hasColour ;
+                                                      sh:hasValue :black;
+                                                  ]
+                                      ]
+                          ];
+          ]
+          [
+              # black can only capture white
+              sh:property [
+                              sh:path :hasColour ;
+                              sh:hasValue :black;
+                          ];
+              sh:property [
+                              sh:path :movesTo_t1;
+                              sh:property [
+                                          sh:path [sh:inversePath :occupiesPosition_t0 ];
+                                          sh:property [
+                                                      sh:path :hasColour ;
+                                                      sh:hasValue :white;
+                                                  ]
+                                      ]
+                          ];
+          ]
+
+      ).
+
+shape:moveToTile
+    a sh:PropertyShape ;
+    sh:path :movesTo_t1;
+    sh:class :tile.
+
+shape:cantCaptureKing
+    a sh:NodeShape  ;
+    sh:not[
+          sh:property [
+                          sh:path :movesTo_t1;
+                          sh:property [
+                                      sh:path [sh:inversePath :occupiesPosition_t0 ];
+                                      sh:class :King;
+                                      sh:minCount 1;
+                                  ]
+                      ];
+      ].
+
+shape:notSamePosition
+    a sh:NodeShape ;
+    sh:not[
+          sh:property [
+                          sh:path :occupiesPosition_t0 ;
+                          sh:equals :movesTo_t1;
+                      ]
+      ].
+
 

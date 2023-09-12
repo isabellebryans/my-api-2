@@ -1,0 +1,75 @@
+@prefix owl: <http://www.w3.org/2002/07/owl#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix : <http://example.org/chess/> .
+
+:adjacentTo a owl:ObjectProperty  .
+
+:above a owl:ObjectProperty ;
+       rdfs:subPropertyOf  :adjacentTo .
+:below a owl:ObjectProperty ;
+       rdfs:subPropertyOf :adjacentTo .
+:right a owl:ObjectProperty ;
+          rdfs:subPropertyOf :adjacentTo .
+:left a owl:ObjectProperty ;
+        rdfs:subPropertyOf :adjacentTo .
+:tl a owl:ObjectProperty ;
+       rdfs:subPropertyOf :adjacentTo .
+:tr a owl:ObjectProperty ;
+       rdfs:subPropertyOf :adjacentTo .
+:bl a owl:ObjectProperty ;
+       rdfs:subPropertyOf :adjacentTo .
+:br a owl:ObjectProperty ;
+       rdfs:subPropertyOf :adjacentTo .
+
+
+:occupiesPosition a owl:ObjectProperty .
+:occupiesPosition_t0 a owl:ObjectProperty .
+:occupiesPosition_t1 a owl:ObjectProperty .
+:occupiesPosition_t2 a owl:ObjectProperty .
+:occupiesPosition_t3 a owl:ObjectProperty .
+
+
+:movesTo_t1 a owl:ObjectProperty .
+:movesTo_t2 a owl:ObjectProperty .
+:movesTo_t3 a owl:ObjectProperty .
+
+:movesFrom_t1 a owl:ObjectProperty .
+:movesFrom_t2 a owl:ObjectProperty .
+:movesFrom_t3 a owl:ObjectProperty .
+
+:position a owl:Class .
+
+:tile a owl:Class ;
+      rdfs:subClassOf :position .
+:offBoard a owl:Class ;
+      rdfs:subClassOf :position .
+
+:row a owl:ObjectProperty .
+:column a owl:ObjectProperty .
+:colNo a owl:ObjectProperty .
+
+
+:ChessPiece a owl:Class .
+
+:Bishop a owl:Class ;
+    rdfs:subClassOf :ChessPiece .
+:Pawn a owl:Class ;
+        rdfs:subClassOf :ChessPiece .
+:Knight a owl:Class ;
+        rdfs:subClassOf :ChessPiece .
+:Rook a owl:Class ;
+        rdfs:subClassOf :ChessPiece .
+:Queen a owl:Class ;
+        rdfs:subClassOf :ChessPiece .
+:King a owl:Class ;
+        rdfs:subClassOf :ChessPiece .
+
+
+:Colour a owl:Class .
+:white a :Colour .
+:black a :Colour .
+
+
+:hasColour a owl:ObjectProperty ;
+           rdfs:domain :ChessPiece ;
+           rdfs:range :Colour .

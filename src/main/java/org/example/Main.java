@@ -29,29 +29,6 @@ public class Main {
         post("/resetBoard", ResetBoardController::handleResetBoard);
 
 
-
-
-        // NEED THIS
-        // reset board status, doesn't work
-        // emtpy boardStatusT2
-        post("/totalReset", (req,res)->{
-            System.out.println("here3");
-            res.type("application/json");
-            System.out.println("here");
-            // call the python script to reset the initial board status
-            int stat = runScript("initial/initBoardPositions.py");
-            System.out.println(stat);
-            res.status(stat);
-
-            if(stat == 400){
-                return "Error in reseting board";
-            }
-            return "Board reset";
-
-        });
-
-
-
     }
     // doesn't work
     public static int runScript(String pythonScriptRelativePath) {
